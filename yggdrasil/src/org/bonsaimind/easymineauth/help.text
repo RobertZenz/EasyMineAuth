@@ -1,15 +1,21 @@
   --help                   Prints this help.
   --version                Prints the version.
 
+  --access-token=TOKEN  The access-token to use.
+  --client-token=TOKEN  The client-token to use.
+  --no-new-line         Don't print a newline character after the session id.
+  --password=PASSWORD   Set the password to be used for the login.
+  --separator=SEPARATOR The separator of the access-token and the client-token.
+  --server=SERVER       The address of the server to use for the authentication.
+                        Defaults back to the Mojang server.
+  --silent              Don't print any messages.
+  --username=USERNAME   Set the username to be used for the username.
 
-  --no-new-line        Don't print a newline character after the session id.
-  --password=PASSWORD  Set the password to be used for the login.
-  --session=SESSION    Set the session id. Setting this will perform
-                       a keep-alive instead of a login.
-  --server=SERVER      The address of the server to use for the authentication.
-                       Defaults back to the Mojang server.
-  --silent             Don't print any messages.
-  --username=USERNAME  Set the username to be used for the username.
-  --version=VERSION    Set the version of the launcher which is reported to
-                       the authentication server.
+
+Login:    --username= --password=
+          Prints access-token, separator, client-token.
+Refresh:  --access-token= --client-token=
+          Prints access-token, separator, client-token
+Validate: --access-token=
+          Prints nothing if ok.
 

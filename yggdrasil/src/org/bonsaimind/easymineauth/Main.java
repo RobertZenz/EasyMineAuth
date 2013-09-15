@@ -35,7 +35,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bonsaimind.minecraftmiddleknife.Authentication;
 import org.bonsaimind.minecraftmiddleknife.Yggdrasil;
 import org.json.simple.parser.ParseException;
 
@@ -48,7 +47,8 @@ public class Main {
 	public static void main(String[] args) {
 		LOGGER.setLevel(Level.ALL);
 
-		String clientToken = null;
+		String accessToken = "";
+		String clientToken = "";
 		boolean noNewLine = false;
 		String password = "";
 		String separator = ":";
@@ -56,7 +56,9 @@ public class Main {
 		String username = "";
 
 		for (String arg : args) {
-			if (arg.startsWith("--client-token=")) {
+			if (arg.startsWith("--access-token=")) {
+				accessToken = arg.substring(15);
+			} else if (arg.startsWith("--client-token=")) {
 				clientToken = arg.substring(15);
 			} else if (arg.equals("--help")) {
 				printHelp();
@@ -82,7 +84,13 @@ public class Main {
 			}
 		}
 
-		authenticate(server, username, password, clientToken, separator, noNewLine);
+		if (accessToken.length() > 0 && clientToken.length() > 0) {
+			refresh(server, accessToken, clientToken, separator, noNewLine);
+		} else if (accessToken.length() > 0) {
+			validate(server, accessToken);
+		} else {
+			authenticate(server, username, password, clientToken, separator, noNewLine);
+		}
 	}
 
 	private static void authenticate(String server, String username, String password, String clientToken, String separator, boolean noNewLine) {
@@ -100,6 +108,63 @@ public class Main {
 				}
 			} else {
 				LOGGER.log(Level.SEVERE, "{0}: {1} ({2})", new Object[]{yggdrasil.getError(), yggdrasil.getErrorMessage(), yggdrasil.getErrorCause()});
+				System.exit(1);
+			}
+		} catch (UnsupportedEncodingException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		} catch (MalformedURLException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		} catch (IOException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		} catch (ParseException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		}
+	}
+
+	private static void refresh(String server, String accessToken, String clientToken, String separator, boolean noNewLine) {
+		Yggdrasil yggdrasil = new Yggdrasil();
+		yggdrasil.setServer(server);
+		yggdrasil.setAccessToken(accessToken);
+		yggdrasil.setClientToken(clientToken);
+
+		try {
+			if (yggdrasil.refresh()) {
+				if (noNewLine) {
+					System.out.print(yggdrasil.getAccessToken() + separator + yggdrasil.getClientToken());
+				} else {
+					System.out.println(yggdrasil.getAccessToken() + separator + yggdrasil.getClientToken());
+				}
+			} else {
+				LOGGER.log(Level.SEVERE, "{0}: {1} ({2})", new Object[]{yggdrasil.getError(), yggdrasil.getErrorMessage(), yggdrasil.getErrorCause()});
+				System.exit(1);
+			}
+		} catch (UnsupportedEncodingException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		} catch (MalformedURLException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		} catch (IOException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		} catch (ParseException ex) {
+			LOGGER.log(Level.SEVERE, null, ex);
+			System.exit(1);
+		}
+	}
+
+	private static void validate(String server, String accessToken) {
+		Yggdrasil yggdrasil = new Yggdrasil();
+		yggdrasil.setAccessToken(accessToken);
+
+		try {
+			if (!yggdrasil.validate()) {
+				LOGGER.log(Level.SEVERE, "{0}: {1} ({2})", new Object[]{yggdrasil.getError(), yggdrasil.getErrorMessage(), yggdrasil.getErrorCause()});
+				System.exit(1);
 			}
 		} catch (UnsupportedEncodingException ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
@@ -129,8 +194,8 @@ public class Main {
 
 		InputStream stream = Main.class.getResourceAsStream("/org/bonsaimind/easymineauth/help.text");
 		BufferedReader reader = new BufferedReader(new InputStreamReader(stream));
-
 		String line;
+
 		try {
 			while ((line = reader.readLine()) != null) {
 				System.out.println(line);
