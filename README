@@ -1,4 +1,18 @@
 EasyMineAuth
 ------------
 
-A command line tool to acquire a Minecraft session.
+This project aims to provide simple tools to allow you to acquire
+a Minecraft-User-session from the command line.
+
+
+Auth
+----
+
+The Pre-1.6 authentication system.
+
+
+Yggdrasil
+---------
+
+The Post-1.6 authentication system.
+
