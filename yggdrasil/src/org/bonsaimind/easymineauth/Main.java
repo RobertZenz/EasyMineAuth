@@ -35,7 +35,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bonsaimind.minecraftmiddleknife.Yggdrasil;
+import org.bonsaimind.minecraftmiddleknife.post16.Yggdrasil;
 import org.json.simple.parser.ParseException;
 
 public class Main {

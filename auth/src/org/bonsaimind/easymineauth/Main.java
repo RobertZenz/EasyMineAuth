@@ -35,8 +35,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bonsaimind.minecraftmiddleknife.Authentication;
-import org.bonsaimind.minecraftmiddleknife.AuthenticationResponse;
+import org.bonsaimind.minecraftmiddleknife.pre16.Authentication;
+import org.bonsaimind.minecraftmiddleknife.pre16.AuthenticationResponse;
 
 public class Main {
 
