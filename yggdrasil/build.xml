@@ -35,5 +35,16 @@
 			manifest="MANIFEST.MF">
 			<fileset dir="${src}" includes="org/bonsaimind/easymineauth/help.txt" />
 		</jar>
+		<tar destfile="${dist}/emayggdrasil.tar" basedir=".">
+			<include name="${src}/**" />
+			<include name="${dist}/emayggdrasil.jar" />
+			<include name="build.xml" />
+			<include name="../CHANGES" />
+			<include name="../CONTRIBUTE" />
+			<include name="../LICENSE" />
+			<include name="../README" />
+			<include name="../THANKS" />
+		</tar>
+		<bzip2 src="${dist}/emayggdrasil.tar" destfile="${dist}/emayggdrasil.tar.bz2" />
 	</target>
 </project>
