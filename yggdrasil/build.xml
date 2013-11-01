@@ -33,7 +33,7 @@
 		description="Creates the jar and a tar archive.">
 		<jar jarfile="${dist}/emayggdrasil.jar" basedir="${build}"
 			manifest="MANIFEST.MF">
-			<fileset dir="${src}" includes="org/bonsaimind/easymineauth/help.txt" />
+			<fileset dir="${src}" includes="org/bonsaimind/easymineauth/help.text" />
 		</jar>
 		<tar destfile="${dist}/emayggdrasil.tar" basedir=".">
 			<include name="${src}/**" />
