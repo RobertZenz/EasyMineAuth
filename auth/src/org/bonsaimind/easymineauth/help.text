@@ -13,3 +13,5 @@
   --version=VERSION    Set the version of the launcher which is reported to
                        the authentication server.
 
+Login:       --username=USERNAME --password=PASSWORD
+Keep-Alive:  --username=USERNAME --session=SESSION

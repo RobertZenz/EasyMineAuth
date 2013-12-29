@@ -31,12 +31,14 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bonsaimind.minecraftmiddleknife.pre16.Authentication;
-import org.bonsaimind.minecraftmiddleknife.pre16.AuthenticationResponse;
+import org.bonsaimind.minecraftmiddleknife.Credentials;
+import org.bonsaimind.minecraftmiddleknife.pre16.AuthenticatedSession;
+import org.bonsaimind.minecraftmiddleknife.pre16.AuthenticationException;
+import org.bonsaimind.minecraftmiddleknife.pre16.Authenticator;
 
 public class Main {
 
@@ -49,10 +51,10 @@ public class Main {
 
 		boolean noNewLine = false;
 		String password = "";
-		String server = Authentication.MOJANG_SERVER;
+		String server = Authenticator.MOJANG_SERVER;
 		String session = "";
 		String username = "";
-		String version = Authentication.LAUNCHER_VERSION;
+		String version = Authenticator.DEFAULT_LAUNCHER_VERSION;
 
 		for (String arg : args) {
 			if (arg.equals("--help")) {
@@ -94,19 +96,14 @@ public class Main {
 	 * @param username
 	 * @param session
 	 */
-	public static void keepAlive(String server, String username, String session) {
-		Authentication authentication = new Authentication();
-		authentication.setRealUsername(username);
-		authentication.setSessionId(session);
+	public static void keepAlive(String server, String username, String sessionId) {
+		AuthenticatedSession session = new AuthenticatedSession(0, "", username, sessionId, "");
 		try {
-			authentication.keepAlive();
-		} catch (UnsupportedEncodingException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
+			Authenticator.keepAlive(new URL(server), session);
 		} catch (MalformedURLException ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
-		} catch (IOException ex) {
+		} catch (AuthenticationException ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
 		}
@@ -120,30 +117,20 @@ public class Main {
 	 * @param version
 	 */
 	public static void login(String server, String username, String password, String version, boolean noNewLine) {
-		Authentication authentication = new Authentication(server, version, username, password);
-
+		Credentials credentials = new Credentials(username, password);
+		AuthenticatedSession session = null;
 		try {
-			AuthenticationResponse response = authentication.authenticate();
-
-			if (response == AuthenticationResponse.SUCCESS) {
-				if (noNewLine) {
-					System.out.print(authentication.getSessionId());
-				} else {
-					System.out.println(authentication.getSessionId());
-				}
-			} else {
-				LOGGER.log(Level.SEVERE, response.getMessage());
-				System.exit(1);
-			}
-		} catch (UnsupportedEncodingException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
+			session = Authenticator.authenticate(new URL(server), version, credentials);
 		} catch (MalformedURLException ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
-		} catch (IOException ex) {
+		} catch (AuthenticationException ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
+		}
+		System.out.print(session.getSessionId());
+		if (!noNewLine) {
+			System.out.println();
 		}
 	}
 
