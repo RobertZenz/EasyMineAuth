@@ -1,17 +1,19 @@
-  --help                   Prints this help.
-  --version                Prints the version.
+  --help                Prints this help.
+  --version             Prints the version.
 
 
-  --no-new-line        Don't print a newline character after the session id.
-  --password=PASSWORD  Set the password to be used for the login.
-  --session=SESSION    Set the session id. Setting this will perform
-                       a keep-alive instead of a login.
-  --server=SERVER      The address of the server to use for the authentication.
-                       Defaults back to the Mojang server.
-  --silent             Don't print any messages.
-  --username=USERNAME  Set the username to be used for the username.
-  --version=VERSION    Set the version of the launcher which is reported to
-                       the authentication server.
+  --no-new-line         Don't print a newline character after the session id.
+  --print-full-response Print the full response when doing a login instead of
+                        only the session id.
+  --password=PASSWORD   Set the password to be used for the login.
+  --session=SESSION     Set the session id. Setting this will perform
+                        a keep-alive instead of a login.
+  --server=SERVER       The address of the server to use for the authentication.
+                        Defaults back to the Mojang server.
+  --silent              Don't print any messages.
+  --username=USERNAME   Set the username to be used for the username.
+  --version=VERSION     Set the version of the launcher which is reported to
+                        the authentication server.
 
 Login:       --username=USERNAME --password=PASSWORD
 Keep-Alive:  --username=USERNAME --session=SESSION

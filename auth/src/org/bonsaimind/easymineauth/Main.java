@@ -51,6 +51,7 @@ public class Main {
 
 		boolean noNewLine = false;
 		String password = "";
+		boolean printFullResponse = false;
 		String server = Authenticator.MOJANG_SERVER;
 		String session = "";
 		String username = "";
@@ -64,6 +65,8 @@ public class Main {
 				noNewLine = true;
 			} else if (arg.startsWith("--password=")) {
 				password = arg.substring(11);
+			} else if (arg.equals("--print-full-response")) {
+				printFullResponse = true;
 			} else if (arg.startsWith("--server=")) {
 				server = arg.substring(9);
 			} else if (arg.startsWith("--session=")) {
@@ -84,7 +87,7 @@ public class Main {
 		}
 
 		if (session == null || session.length() == 0) {
-			login(server, username, password, version, noNewLine);
+			login(server, username, password, version, noNewLine, printFullResponse);
 		} else {
 			keepAlive(server, username, session);
 		}
@@ -116,7 +119,7 @@ public class Main {
 	 * @param password
 	 * @param version
 	 */
-	public static void login(String server, String username, String password, String version, boolean noNewLine) {
+	public static void login(String server, String username, String password, String version, boolean noNewLine, boolean printFullResponse) {
 		Credentials credentials = new Credentials(username, password);
 		AuthenticatedSession session = null;
 		try {
@@ -128,7 +131,12 @@ public class Main {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
 		}
-		System.out.print(session.getSessionId());
+
+		if (printFullResponse) {
+			System.out.print(session.toString());
+		} else {
+			System.out.print(session.getSessionId());
+		}
 		if (!noNewLine) {
 			System.out.println();
 		}
