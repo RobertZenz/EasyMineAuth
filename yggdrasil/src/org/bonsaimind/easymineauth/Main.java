@@ -31,12 +31,16 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bonsaimind.minecraftmiddleknife.post16.Yggdrasil;
-import org.json.simple.parser.ParseException;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.Agent;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.AuthenticationRequest;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.AuthenticationResponse;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.RefreshRequest;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.RefreshResponse;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.ValidationRequest;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.Yggdrasil;
+import org.bonsaimind.minecraftmiddleknife.post16.yggdrasil.YggdrasilError;
 
 public class Main {
 
@@ -52,7 +56,7 @@ public class Main {
 		boolean noNewLine = false;
 		String password = "";
 		String separator = ":";
-		String server = Yggdrasil.MOJANG_SERVER;
+		String server = "";
 		String username = "";
 
 		for (String arg : args) {
@@ -94,88 +98,45 @@ public class Main {
 	}
 
 	private static void authenticate(String server, String username, String password, String clientToken, String separator, boolean noNewLine) {
-		Yggdrasil yggdrasil = new Yggdrasil(server, username, password);
-		if (clientToken != null && clientToken.length() > 0) {
-			yggdrasil.setClientToken(clientToken);
-		}
+		AuthenticationRequest request = new AuthenticationRequest(Agent.MINECRAFT, username, password, clientToken);
 
 		try {
-			if (yggdrasil.authenticate()) {
-				if (noNewLine) {
-					System.out.print(yggdrasil.getAccessToken() + separator + yggdrasil.getClientToken());
-				} else {
-					System.out.println(yggdrasil.getAccessToken() + separator + yggdrasil.getClientToken());
-				}
-			} else {
-				LOGGER.log(Level.SEVERE, "{0}: {1} ({2})", new Object[]{yggdrasil.getError(), yggdrasil.getErrorMessage(), yggdrasil.getErrorCause()});
-				System.exit(1);
+			AuthenticationResponse response = Yggdrasil.authenticate(request);
+
+			System.out.print(response.getAccessToken() + separator + response.getClientToken());
+
+			if (!noNewLine) {
+				System.out.println();
 			}
-		} catch (UnsupportedEncodingException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (MalformedURLException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (IOException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (ParseException ex) {
+		} catch (YggdrasilError ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
 		}
 	}
 
 	private static void refresh(String server, String accessToken, String clientToken, String separator, boolean noNewLine) {
-		Yggdrasil yggdrasil = new Yggdrasil();
-		yggdrasil.setServer(server);
-		yggdrasil.setAccessToken(accessToken);
-		yggdrasil.setClientToken(clientToken);
+		RefreshRequest request = new RefreshRequest(accessToken, clientToken);
 
 		try {
-			if (yggdrasil.refresh()) {
-				if (noNewLine) {
-					System.out.print(yggdrasil.getAccessToken() + separator + yggdrasil.getClientToken());
-				} else {
-					System.out.println(yggdrasil.getAccessToken() + separator + yggdrasil.getClientToken());
-				}
-			} else {
-				LOGGER.log(Level.SEVERE, "{0}: {1} ({2})", new Object[]{yggdrasil.getError(), yggdrasil.getErrorMessage(), yggdrasil.getErrorCause()});
-				System.exit(1);
+			RefreshResponse response = Yggdrasil.refresh(request);
+
+			System.out.print(response.getAccessToken() + separator + response.getClientToken());
+
+			if (!noNewLine) {
+				System.out.println();
 			}
-		} catch (UnsupportedEncodingException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (MalformedURLException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (IOException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (ParseException ex) {
+		} catch (YggdrasilError ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
 		}
 	}
 
 	private static void validate(String server, String accessToken) {
-		Yggdrasil yggdrasil = new Yggdrasil();
-		yggdrasil.setAccessToken(accessToken);
+		ValidationRequest request = new ValidationRequest(accessToken);
 
 		try {
-			if (!yggdrasil.validate()) {
-				LOGGER.log(Level.SEVERE, "{0}: {1} ({2})", new Object[]{yggdrasil.getError(), yggdrasil.getErrorMessage(), yggdrasil.getErrorCause()});
-				System.exit(1);
-			}
-		} catch (UnsupportedEncodingException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (MalformedURLException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (IOException ex) {
-			LOGGER.log(Level.SEVERE, null, ex);
-			System.exit(1);
-		} catch (ParseException ex) {
+			Yggdrasil.validate(request);
+		} catch (YggdrasilError ex) {
 			LOGGER.log(Level.SEVERE, null, ex);
 			System.exit(1);
 		}
